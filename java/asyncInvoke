@@ -1,0 +1,94 @@
+   AsyncContext asy =  request.startAsync();    //开始异步调用
+   asy.setTimeOut(60 * 1000);                   //设置异步调用的超时时长
+   asy.start(线程(asy))；                       //启动异步调用的线程
+
+
+   线程:  构造方法初始化AsyncContext变量 ，逻辑完成后调用 asy.dispatch("/*.jsp), 跳转的jsp页面必须以/开头，目标页面需要指定 session=false 就不会重新创建session；
+
+
+
+
+   开启异步调用的条件  1：为@WebServlet指定asyncSupported=true.
+                       2: 在web.xml文件中的servlet元素中增加<async-supported>true</async-supported>
+
+
+小结一下编写异步的Servlet的步骤：
+
+1. ServletRequest中调用startAsync方法，返回AsyncContext实例。
+
+2.在AsyncContext中调用setTimeout方法，设置等待任务的时间。
+
+3. 调用asyncContext.start方法，传递一个长时间执行的runnable。
+
+4.任务完成的时候，通过runnable调用asyncContext.complete方法或者.dispatch方法
+
+
+
+
+
+
+     异步监听器
+
+1：需要实现AsyncListener接口
+2：注册:  AsyncContext asy = request.startAsync();   asy.addListener(new 实现AsyncListener的类);
+
+
+
+
+
+   非阻塞IO
+
+1.开启异步调用的情况下，为request.getInputStream() 或者 request.getReader() 设置  ReadListener 监听器  
+   request.getInputStream().setReadListener(param);   param ： ReadListener的实现类。
+
+2. ReadListener  的实现类必须实现三个方法   在onDataAvailable()方法里面做处理 ，   需要把要处理的流通过构造方法传过来
+
+
+
+
+   request的 getInputStream和 getReader   
+
+1. inputStream  是处理二进制流的   
+2. Reader       是处理字符流的
+
+
+
+    GET 和  POST  parameter quest 
+
+
+1.  request的getQueryString()
+
+        returns the query string that is contained in the request URL after the path. 
+        This method returns null if the URL does not have a query string. Same as the value of the CGI variable QUERY_STRING.
+
+2.  request.getParameter(param)   对于GET and Post 都适用，
+
+
+
+
+3.  request.getInputStream() and   request.getReader() 
+    
+   form 表单 ： 默认 enctype  是 enctype="application/x-www-form-urlencoded" 
+               这种方式在用getParameter方法获取之后就不可以用别的流获取到了，因为流只可以被读取一次。
+
+               enctype multipart/form-data                             
+	       这种方式只可以用流读到，不可以用getParameter（） 读
+    
+
+
+
+      
+
+
+     文件上传        request.getServletContext.getresource(""); 相当与web应用根路径的相对路径来获取资源   
+
+
+1，设置表单enctype="multipart/form-data"    
+2.request.getpart();  得到Part  文件域
+3.part.write(filepath);   文件写入的地址   
+
+
+ 
+
+
+
